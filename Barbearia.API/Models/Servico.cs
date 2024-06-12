@@ -14,10 +14,10 @@ namespace Barbearia.API.Models
 
         [Required(ErrorMessage = "Favor colocar um nome para o serviço")]
         [DisplayName("Nome Serviço")]
-        public string NomeServico { get; set; }
+        public string? NomeServico { get; set; }
 
         [DisplayName("Descrição")]
-        public string Descricao { get; set; }
+        public string? Descricao { get; set; }
 
         [Range(10, 15, ErrorMessage = "A duração deve ser de 10 até 15 minutos")]
         public int DuracaoMin { get; set; }
