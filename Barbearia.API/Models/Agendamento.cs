@@ -26,5 +26,7 @@ namespace Barbearia.API.Models
 
         [ForeignKey("ClienteID")]
         public Cliente Cliente { get; set; }
+
+        public virtual ICollection<Servico> Servicos { get; set; }
     }
 }
