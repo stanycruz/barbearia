@@ -63,5 +63,35 @@ namespace Barbearia.API.Controllers
 
             return BadRequest();
         }
+
+        [HttpPut]
+        public async Task<IActionResult> Edit(int id, ClienteDTO clienteDTO)
+        {
+            if (id != clienteDTO.ClienteID)
+            {
+                return BadRequest();
+            }
+
+            if(ModelState.IsValid)
+            {
+                var cliente = _dbContext.Clientes.Find(clienteDTO.ClienteID);
+
+                if (cliente == null)
+                {
+                    return NotFound();
+                }
+
+                cliente.Nome = clienteDTO.Nome;
+                cliente.Telefone = clienteDTO.Telefone;
+                cliente.Email = clienteDTO.Email;
+                cliente.DataNascimento = clienteDTO.DataNascimento;
+
+                _dbContext.Update(cliente);
+                await _dbContext.SaveChangesAsync();
+                return Ok();
+            }
+
+            return BadRequest();
+        }
     }
 }
