@@ -93,5 +93,20 @@ namespace Barbearia.API.Controllers
 
             return BadRequest();
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var cliente = await _dbContext.Clientes.FindAsync(id);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.Clientes.Remove(cliente);
+            await _dbContext.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
