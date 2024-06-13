@@ -64,7 +64,7 @@ namespace Barbearia.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> Edit(int id, ClienteDTO clienteDTO)
         {
             if (id != clienteDTO.ClienteID)
@@ -86,7 +86,7 @@ namespace Barbearia.API.Controllers
                 cliente.Email = clienteDTO.Email;
                 cliente.DataNascimento = clienteDTO.DataNascimento;
 
-                _dbContext.Update(cliente);
+                _dbContext.Clientes.Update(cliente);
                 await _dbContext.SaveChangesAsync();
                 return Ok();
             }
