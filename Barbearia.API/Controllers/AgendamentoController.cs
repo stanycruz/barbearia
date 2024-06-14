@@ -31,6 +31,12 @@ namespace Barbearia.API.Controllers
                 .Include(c => c.Cliente)
                 .Include(s => s.Servicos)
                 .ToListAsync();
+
+            if (agendamentos.Count == 0)
+            {
+                return NotFound();
+            }
+
             return Ok(agendamentos);
         }
 
@@ -57,6 +63,7 @@ namespace Barbearia.API.Controllers
                     ClienteID = agendamentoDTO.ClienteID,
                     Observacoes = agendamentoDTO.Observacoes,
                     DataHora = agendamentoDTO.DataHora,
+                    Status = agendamentoDTO.Status,
                     Servicos = new List<Servico>()
                 };
                 agendamento.Cliente = _dbContext.Clientes.Find(agendamento.ClienteID);
@@ -79,6 +86,73 @@ namespace Barbearia.API.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Edit(int id, AgendamentoDTO agendamentoDTO)
+        {
+            if (id != agendamentoDTO.AgendamentoID)
+            {
+                return BadRequest();
+            }
+
+            if(ModelState.IsValid)
+            {
+                var agendamento = _dbContext
+                    .Agendamentos
+                    .Include(s => s.Servicos)
+                    .Include(c => c.Cliente)
+                    .FirstOrDefault(x => x.AgendamentoID == agendamentoDTO.AgendamentoID);
+
+                if (agendamento == null)
+                {
+                    return NotFound();
+                }
+
+                agendamento.ClienteID = agendamentoDTO.ClienteID;
+                agendamento.Observacoes = agendamentoDTO.Observacoes;
+                agendamento.DataHora = agendamentoDTO.DataHora;
+                agendamento.Status = agendamentoDTO.Status;
+                agendamento.Servicos = new List<Servico>();
+                agendamento.Cliente = _dbContext.Clientes.Find(agendamento.ClienteID);
+
+                foreach (var item in agendamentoDTO.Servicos)
+                {
+                    var servico = _dbContext.Servicos.Find(item.Id);
+
+                    if (servico == null)
+                    {
+                        return BadRequest();
+                    }
+
+                    agendamento.Servicos.Add(servico);
+                }
+
+                _dbContext.Agendamentos.Update(agendamento);
+                await _dbContext.SaveChangesAsync();
+                return Ok(agendamento);
+            }
+
+            return BadRequest();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var agendamento = await _dbContext
+                .Agendamentos
+                .Include(s => s.Servicos)
+                .Include(c => c.Cliente)
+                .FirstOrDefaultAsync(x => x.AgendamentoID == id);
+
+            if (agendamento == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.Agendamentos.Remove(agendamento);
+            await _dbContext.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
