@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Barbearia.API.Data;
 using Barbearia.API.DTO;
 using Barbearia.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace Barbearia.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class ClienteController : ControllerBase
     {
