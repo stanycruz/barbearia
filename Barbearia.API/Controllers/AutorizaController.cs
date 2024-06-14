@@ -52,6 +52,32 @@ namespace Barbearia.API.Controllers
             return Ok(GerarToken(usuarioDTO));
         }
 
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] UsuarioDTO usuarioDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(
+                usuarioDTO.Email,
+                usuarioDTO.Password,
+                isPersistent: false,
+                lockoutOnFailure: false
+            );
+
+            if (result.Succeeded)
+            {
+                return Ok(GerarToken(usuarioDTO));
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Combinação e-mail ou senha inválidos");
+                return BadRequest(ModelState);
+            }
+        }
+
         private UsuarioToken GerarToken(UsuarioDTO userInfo)
         {
             var claims = new[]
