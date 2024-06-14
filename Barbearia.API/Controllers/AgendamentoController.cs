@@ -26,7 +26,11 @@ namespace Barbearia.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var agendamentos = await _dbContext.Agendamentos.ToListAsync();
+            var agendamentos = await _dbContext
+                .Agendamentos
+                .Include(c => c.Cliente)
+                .Include(s => s.Servicos)
+                .ToListAsync();
             return Ok(agendamentos);
         }
 
