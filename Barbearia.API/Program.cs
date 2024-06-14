@@ -1,4 +1,5 @@
 using Barbearia.API.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,10 @@ string sqlServer = builder.Configuration.GetConnectionString("DefaultConnection"
 builder.Services.AddDbContext<ApplicationDbContext>(options => 
     options.UseSqlServer(sqlServer)
 );
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
